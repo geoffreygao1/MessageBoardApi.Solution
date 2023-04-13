@@ -101,6 +101,11 @@ namespace MessageBoardApi.Controllers
     [HttpPost]
     public async Task<ActionResult<Message>> PostMessage(Message message)
     {
+      Group match = _context.Groups.FirstOrDefault(group => group.GroupId == message.GroupId);
+      if (match == null)
+      {
+        return BadRequest();
+      }
       _context.Messages.Add(message);
       await _context.SaveChangesAsync();
 
