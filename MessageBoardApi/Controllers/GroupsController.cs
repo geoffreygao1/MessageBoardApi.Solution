@@ -41,6 +41,22 @@ namespace MessageBoardApi.Controllers
       return @group;
     }
 
+    // GET: api/Groups/5/Messages
+    [HttpGet("{id}/Messages")]
+    public async Task<ActionResult<List<Message>>> GetMessagesForGroup(int id)
+    {
+      IQueryable<Message> query = _context.Messages
+                                .Where(message => message.GroupId == id)
+                                .AsQueryable();
+
+      if (query == null)
+      {
+        return NotFound();
+      }
+
+      return await query.ToListAsync();
+    }
+
     // PUT: api/Groups/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
@@ -81,6 +97,17 @@ namespace MessageBoardApi.Controllers
       await _context.SaveChangesAsync();
 
       return CreatedAtAction("GetGroup", new { id = @group.GroupId }, @group);
+    }
+
+    // POST: api/Groups/id
+    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [HttpPost("{id}/NewMessage")]
+    public async Task<ActionResult<Message>> PostMessageToGroup(int id, Message message)
+    {
+      message.GroupId = id;
+      _context.Messages.Add(message);
+      await _context.SaveChangesAsync();
+      return CreatedAtAction(nameof(PostMessageToGroup), new { id = message.MessageId }, message);
     }
 
     // DELETE: api/Groups/5
