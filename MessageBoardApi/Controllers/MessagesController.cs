@@ -62,6 +62,30 @@ namespace MessageBoardApi.Controllers
       return message;
     }
 
+    // GET: api/Messages/Sort
+    [HttpGet("Sort")]
+    public async Task<ActionResult<List<Message>>> GetMessage(string sortOrder)
+    {
+      var messages = from s in _context.Messages
+                     select s;
+      switch (sortOrder)
+      {
+        case "author_desc":
+          messages = messages.OrderByDescending(s => s.Author);
+          break;
+        case "Date":
+          messages = messages.OrderBy(s => s.Date);
+          break;
+        case "date_desc":
+          messages = messages.OrderByDescending(s => s.Date);
+          break;
+        default:
+          messages = messages.OrderBy(s => s.Author);
+          break;
+      }
+      return await messages.AsNoTracking().ToListAsync();
+    }
+
     // PUT: api/Messages/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
