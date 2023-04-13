@@ -27,6 +27,24 @@ namespace MessageBoardApi.Controllers
       return await _context.Groups.ToListAsync();
     }
 
+    // GET: api/Groups/Sort
+    [HttpGet("Sort")]
+    public async Task<ActionResult<List<Group>>> GetMessage(string sortOrder)
+    {
+      var groups = from s in _context.Groups
+                   select s;
+      switch (sortOrder)
+      {
+        case "Name_desc":
+          groups = groups.OrderByDescending(s => s.Name);
+          break;
+        default:
+          groups = groups.OrderBy(s => s.Name);
+          break;
+      }
+      return await groups.AsNoTracking().ToListAsync();
+    }
+
     // GET: api/Groups/5
     [HttpGet("{id}")]
     public async Task<ActionResult<Group>> GetGroup(int id)
