@@ -86,6 +86,19 @@ namespace MessageBoardApi.Controllers
       return await messages.AsNoTracking().ToListAsync();
     }
 
+
+    // GET: api/Groups/Random
+    [HttpGet("Random")]
+    public async Task<ActionResult<Message>> GetRandom()
+    {
+      int total = _context.Messages.Count();
+      Random r = new Random();
+      int offset = r.Next(0, total);
+
+      Message randomMessage = await _context.Messages.Skip(offset).FirstOrDefaultAsync();
+      return randomMessage;
+    }
+
     // PUT: api/Messages/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
