@@ -35,6 +35,12 @@ namespace MessageBoardApi.Controllers
                    select s;
       switch (sortOrder)
       {
+        case "Msg_desc":
+          groups = groups.OrderByDescending(s => s.Messages.Count());
+          break;
+        case "Msg":
+          groups = groups.OrderBy(s => s.Messages.Count());
+          break;
         case "Name_desc":
           groups = groups.OrderByDescending(s => s.Name);
           break;
@@ -43,6 +49,18 @@ namespace MessageBoardApi.Controllers
           break;
       }
       return await groups.AsNoTracking().ToListAsync();
+    }
+
+    // GET: api/Groups/Random
+    [HttpGet("Random")]
+    public async Task<ActionResult<Group>> GetRandom()
+    {
+      int total = _context.Groups.Count();
+      Random r = new Random();
+      int offset = r.Next(0, total);
+
+      Group randomGroup = await _context.Groups.Skip(offset).FirstOrDefaultAsync();
+      return randomGroup;
     }
 
     // GET: api/Groups/5
